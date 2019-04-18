@@ -13,7 +13,7 @@ You will be able to:
 
 ## An example with one predictor
 
-The data sety "yields.csv", with just 21 cases, contains measurements of the yields from an experiment done at six different levels of temperature in degrees Fahrenheit. Let's plot them.
+The data set "yields.csv", with just 21 cases, contains measurements of the yields from an experiment done at six different levels of temperature in degrees Fahrenheit. Let's plot them.
 
 
 ```python
@@ -35,7 +35,7 @@ plt.ylabel("Yield");
 ![png](index_files/index_8_0.png)
 
 
-It's clear that there is no linear relationship between Yield and Temperature. Let's try and plot a line anyways and see how our model performs:
+It's clear that there is no linear relationship between Yield and Temperature. Let's try and plot a line anyways and see how the model performs:
 
 
 ```python
@@ -180,7 +180,7 @@ r2_score(y, reg_q.predict(X))
 
 
 
-    0.6948165884110552
+    0.6948165884110553
 
 
 
@@ -206,7 +206,7 @@ plt.ylabel("Yield");
 
 ## Higher order relationships
 
-The use of polynomials is not restricted to quadratic relationships, you can explore cubic relationships,... as well! Imagine you want to go until the power of 10, it would be quite annoying to transform your variable 9 times. Of course, Scikit-Learn has a built-in Polynomial option in the `preprocessing` library! Let's call it with a polynomial of 5!
+The use of polynomials is not restricted to quadratic relationships, you can explore cubic relationships as well! Imagine you want to go until the power of 10, it would be quite annoying to transform your variable 9 times. Of course, Scikit-Learn has a built-in Polynomial option in the `preprocessing` library! Let's call it with a polynomial of 6!
 
 
 ```python
@@ -217,7 +217,27 @@ X = yld[["Temp"]]
 
 poly = PolynomialFeatures(6)
 X_fin = poly.fit_transform(X)
+```
 
+Take a look at what these transformed features really look like. As you can see, Sci-kit Learn transformed the X value of a single 50 into  $50^1$ through $50^6$ ! The first value of 1 represents the intercept in the linear regression, which you can read more about in the [PolynomialFeatures documentation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html).
+
+
+```python
+print('The transformed feature names are: {}'.format(poly.get_feature_names()))
+print('------------------')
+print('The first row of transformed data is: {}'.format(X_fin[0]))
+```
+
+    The transformed feature names are: ['1', 'x0', 'x0^2', 'x0^3', 'x0^4', 'x0^5', 'x0^6']
+    ------------------
+    The first row of transformed data is: [1.0000e+00 5.0000e+01 2.5000e+03 1.2500e+05 6.2500e+06 3.1250e+08
+     1.5625e+10]
+
+
+Now you can fit a linear regression model with your transformed data.
+
+
+```python
 reg_poly = LinearRegression().fit(X_fin, y)
 predict_X = reg_poly.predict(X_fin)
 ```
@@ -239,7 +259,7 @@ plt.ylabel("Yield");
 ```
 
 
-![png](index_files/index_28_0.png)
+![png](index_files/index_32_0.png)
 
 
 
@@ -260,4 +280,4 @@ This seems to be a pretty smooth fit! This good fit is also confirmed with an ev
 
 ## Summary
 
-Great! You now know how to include polynomials in your linear model. Let's go ahead and practice this knowledge!
+Great! You now know how to include polynomials in your linear models. Let's go ahead and practice this knowledge!
