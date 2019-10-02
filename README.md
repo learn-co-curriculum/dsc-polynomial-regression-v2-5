@@ -3,7 +3,7 @@
 
 ## Introduction
 
-In the last section, you saw how you can account for interactions between two variables by including interaction effects in your model. In this section you'll learn about another way to extend your regression model by including polynomial terms.
+In the last section, you saw how you can account for interactions between two variables by including interaction effects in your model. In this section, you'll learn about another way to extend your regression model by including polynomial terms.
 
 ## Objectives
 
@@ -73,7 +73,7 @@ r2_score(y, reg.predict(yld[["Temp"]]))
 
 ## A quadratic relationship
 
-When relationships between predictors and outcome are not linear and show some sort of a curvature, polynomials can be used to generate better approximations. The idea is that you can transform your input variable by e.g, squaring it. The corresponding model would then be:
+When relationships between predictors and outcome are not linear and show some sort of curvature, polynomials can be used to generate better approximations. The idea is that you can transform your input variable by e.g, squaring it. The corresponding model would then be:
 
 
 $\hat y = \hat \beta_0 + \hat \beta_1x + \hat \beta_2 x^2$ 
@@ -204,7 +204,7 @@ plt.ylabel("Yield");
 ![png](index_files/index_23_0.png)
 
 
-## Higher order relationships
+## Higher-order relationships
 
 The use of polynomials is not restricted to quadratic relationships, you can explore cubic relationships as well! Imagine you want to go until the power of 10, it would be quite annoying to transform your variable 9 times. Of course, Scikit-Learn has a built-in Polynomial option in the `preprocessing` library! Let's call it with a polynomial of 6!
 
