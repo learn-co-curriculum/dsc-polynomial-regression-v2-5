@@ -3,32 +3,43 @@
 
 ## Introduction
 
-In the last section, you saw how you can account for interactions between two variables by including interaction effects in your model. In this section, you'll learn about another way to extend your regression model by including polynomial terms.
+In the last lesson, you saw how you can account for interactions between two variables by including interaction effects in your model. In this lesson, you'll learn about another way to extend your regression model by including polynomial terms.
 
 ## Objectives
 
 You will be able to:
 
-- Understand how to account for non-linear relationships between predictors and target variable using polynomial terms
+- Define polynomial variables in a regression context  
+- Use sklearn's built-in capabilities to create polynomial features 
 
 ## An example with one predictor
 
-The data set "yields.csv", with just 21 cases, contains measurements of the yields from an experiment done at six different levels of temperature in degrees Fahrenheit. Let's plot them.
+The dataset `'yields.csv'`, with just 21 cases, contains measurements of the yields from an experiment done at six different levels of temperature in degrees Fahrenheit. Let's plot them.
 
 
 ```python
 import pandas as pd
-yld = pd.read_csv("yield.csv", sep='\s+', index_col = 0)
 import matplotlib.pyplot as plt
-yld.head()
-y = yld["Yield"]
+%matplotlib inline
+yld = pd.read_csv('yield.csv', sep='\s+', index_col=0)
+print(yld.head())
+y = yld['Yield']
 ```
+
+       Temp  Yield
+    i             
+    1    50    3.3
+    2    50    2.8
+    3    50    2.9
+    4    50    3.2
+    5    60    2.7
+
 
 
 ```python
-plt.scatter(yld["Temp"],y, color = "green")
-plt.xlabel("Temperature")
-plt.ylabel("Yield");
+plt.scatter(yld['Temp'], y, color='green')
+plt.xlabel('Temperature')
+plt.ylabel('Yield');
 ```
 
 
@@ -40,15 +51,15 @@ It's clear that there is no linear relationship between Yield and Temperature. L
 
 ```python
 from sklearn.linear_model import LinearRegression
-reg = LinearRegression().fit(yld[["Temp"]], y)
+reg = LinearRegression().fit(yld[['Temp']], y)
 ```
 
 
 ```python
-plt.scatter(yld["Temp"], y, color = "green")
-plt.plot(yld["Temp"], reg.predict(yld[["Temp"]]))
-plt.xlabel("Temperature")
-plt.ylabel("Yield");
+plt.scatter(yld['Temp'], y, color='green')
+plt.plot(yld['Temp'], reg.predict(yld[['Temp']]))
+plt.xlabel('Temperature')
+plt.ylabel('Yield');
 ```
 
 
@@ -59,9 +70,9 @@ plt.ylabel("Yield");
 ```python
 from sklearn.metrics import mean_squared_error, r2_score
 
-mean_squared_error(y, reg.predict(yld[["Temp"]]))
+mean_squared_error(y, reg.predict(yld[['Temp']]))
 
-r2_score(y, reg.predict(yld[["Temp"]]))
+r2_score(y, reg.predict(yld[['Temp']]))
 ```
 
 
@@ -82,10 +93,8 @@ The idea is simple. You can square your predictor (here, "Temp") and include it 
 
 
 ```python
-from sklearn.linear_model import LinearRegression
-X = yld[["Temp"]]
-X["Temp_sq"] = yld["Temp"]**2
-
+X = yld[['Temp']]
+X['Temp_sq'] = yld['Temp']**2
 X.head()
 ```
 
@@ -158,10 +167,10 @@ reg_q = LinearRegression().fit(X, y)
 
 
 ```python
-plt.scatter(X["Temp"],y, color = "green")
-plt.plot(X["Temp"],reg_q.predict(X))
-plt.xlabel("Temperature")
-plt.ylabel("Yield");
+plt.scatter(X['Temp'], y, color='green')
+plt.plot(X['Temp'], reg_q.predict(X))
+plt.xlabel('Temperature')
+plt.ylabel('Yield');
 ```
 
 
@@ -172,7 +181,6 @@ This is the resulting plot. Note that the fit is much better, and this is confir
 
 
 ```python
-from sklearn.metrics import mean_squared_error, r2_score
 mean_squared_error(y, reg_q.predict(X))
 r2_score(y, reg_q.predict(X))
 ```
@@ -189,15 +197,15 @@ Note that you get a seemingly "piecewise linear" function here,  because the yie
 
 ```python
 import numpy as np
-plt.scatter(X["Temp"],y, color = "green")
+plt.scatter(X['Temp'], y, color='green')
 
-X_pred = pd.DataFrame(np.linspace(50,100,50), columns = ["temp"])
-X_pred["sq"] = X_pred**2 
+X_pred = pd.DataFrame(np.linspace(50, 100, 50), columns=['temp'])
+X_pred['sq'] = X_pred**2 
 y_pred = reg_q.predict(X_pred)
 
-plt.plot(X_pred["temp"],y_pred)
-plt.xlabel("Temperature")
-plt.ylabel("Yield");
+plt.plot(X_pred['temp'], y_pred)
+plt.xlabel('Temperature')
+plt.ylabel('Yield');
 ```
 
 
@@ -206,20 +214,20 @@ plt.ylabel("Yield");
 
 ## Higher-order relationships
 
-The use of polynomials is not restricted to quadratic relationships, you can explore cubic relationships as well! Imagine you want to go until the power of 10, it would be quite annoying to transform your variable 9 times. Of course, Scikit-Learn has a built-in Polynomial option in the `preprocessing` library! Let's call it with a polynomial of 6!
+The use of polynomials is not restricted to quadratic relationships. You can explore cubic or higher order relationships as well! Imagine you want to go until the power of 10, it would be quite annoying to transform your variable 9 times. Of course, Scikit-Learn has a built-in polynomial option in the `preprocessing` module! Let's call it with a polynomial of 6!
 
 
 ```python
 from sklearn.preprocessing import PolynomialFeatures
 
-y = yld["Yield"]
-X = yld[["Temp"]]
+y = yld['Yield']
+X = yld[['Temp']]
 
 poly = PolynomialFeatures(6)
 X_fin = poly.fit_transform(X)
 ```
 
-Take a look at what these transformed features really look like. As you can see, Sci-kit Learn transformed the X value of a single 50 into  $50^1$ through $50^6$ ! The first value of 1 represents the intercept in the linear regression, which you can read more about in the [PolynomialFeatures documentation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html).
+Take a look at what these transformed features really look like. As you can see, Scikit-Learn transformed the X value of a single 50 into $50^1$ through $50^6$ ! The first value of 1 represents the intercept in the linear regression, which you can read more about in the [PolynomialFeatures documentation](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PolynomialFeatures.html).
 
 
 ```python
@@ -244,7 +252,7 @@ predict_X = reg_poly.predict(X_fin)
 
 
 ```python
-X_linspace = pd.DataFrame(np.linspace(50,100,50), columns = ["Temp"])
+X_linspace = pd.DataFrame(np.linspace(50, 100, 50), columns=['Temp'])
 X_linspace_fin = poly.fit_transform(X_linspace)
 
 y_poly_pred = reg_poly.predict(X_linspace_fin)
@@ -252,10 +260,10 @@ y_poly_pred = reg_poly.predict(X_linspace_fin)
 
 
 ```python
-plt.scatter(X["Temp"],y, color = "green")
-plt.plot(X_linspace,y_poly_pred)
-plt.xlabel("Temperature")
-plt.ylabel("Yield");
+plt.scatter(X['Temp'], y, color='green')
+plt.plot(X_linspace, y_poly_pred)
+plt.xlabel('Temperature')
+plt.ylabel('Yield');
 ```
 
 
@@ -264,7 +272,6 @@ plt.ylabel("Yield");
 
 
 ```python
-from sklearn.metrics import mean_squared_error, r2_score
 mean_squared_error(y, reg_poly.predict(X_fin))
 r2_score(y, reg_poly.predict(X_fin))
 ```
@@ -276,7 +283,7 @@ r2_score(y, reg_poly.predict(X_fin))
 
 
 
-This seems to be a pretty smooth fit! This good fit is also confirmed with an even better $R^2$). Do note that by adding polynomials, you make your model more complex. Instead of just having 2 parameters ($\beta_0$ and $\beta_1$) for a linear model, you now have 7 (one for the intercept, and 6 for the terms when going until a polynomial with degree 6). More on that later!
+This seems to be a pretty smooth fit! This good fit is also confirmed with an even better $R^2$. Do note that by adding polynomials, you make your model more complex. Instead of just having 2 parameters ($\beta_0$ and $\beta_1$) for a linear model, you now have 7 (one for the intercept, and 6 for the terms when going until a polynomial with degree 6). More on that later!
 
 ## Summary
 
