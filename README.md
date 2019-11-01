@@ -322,14 +322,13 @@ Now you can fit a linear regression model with your transformed data.
 
 ```python
 reg_poly = LinearRegression().fit(X_fin, y)
-predict_X = reg_poly.predict(X_fin)
 ```
 
 
 ```python
 X_linspace = pd.DataFrame(np.linspace(50, 100, 50), columns=['Temp'])
-X_linspace_fin = poly.fit_transform(X_linspace)
 
+X_linspace_fin = poly.fit_transform(X_linspace)
 y_poly_pred = reg_poly.predict(X_linspace_fin)
 ```
 
