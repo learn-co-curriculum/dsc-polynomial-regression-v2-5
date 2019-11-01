@@ -18,32 +18,97 @@ The dataset `'yields.csv'`, with just 21 cases, contains measurements of the yie
 
 
 ```python
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 %matplotlib inline
 yld = pd.read_csv('yield.csv', sep='\s+', index_col=0)
-print(yld.head())
-y = yld['Yield']
+yld.head()
 ```
 
-       Temp  Yield
-    i             
-    1    50    3.3
-    2    50    2.8
-    3    50    2.9
-    4    50    3.2
-    5    60    2.7
 
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Temp</th>
+      <th>Yield</th>
+    </tr>
+    <tr>
+      <th>i</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1</th>
+      <td>50</td>
+      <td>3.3</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>50</td>
+      <td>2.8</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>50</td>
+      <td>2.9</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>50</td>
+      <td>3.2</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>60</td>
+      <td>2.7</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
+We will now seperate the DataFrame into the predictor and outcome variables, `X` and `y`. We do so by:   
+- Assigning the `'Yield'` column to `y` 
+- Dropping the `'Yield'` column from the `yld` DataFrame to create `X` 
+
+_Note: All scikit-learn classes assume the data to be in a certain shape, and by preparing data in this way, we ensure that these requirements are always met._
 
 
 ```python
-plt.scatter(yld['Temp'], y, color='green')
+y = yld['Yield']
+X = yld.drop(columns='Yield', axis=1)
+```
+
+
+```python
+plt.scatter(X, y, color='green')
 plt.xlabel('Temperature')
 plt.ylabel('Yield');
 ```
 
 
-![png](index_files/index_8_0.png)
+![png](index_files/index_10_0.png)
 
 
 It's clear that there is no linear relationship between Yield and Temperature. Let's try and plot a line anyways and see how the model performs:
@@ -51,28 +116,28 @@ It's clear that there is no linear relationship between Yield and Temperature. L
 
 ```python
 from sklearn.linear_model import LinearRegression
-reg = LinearRegression().fit(yld[['Temp']], y)
+reg = LinearRegression().fit(X, y)
 ```
 
 
 ```python
-plt.scatter(yld['Temp'], y, color='green')
-plt.plot(yld['Temp'], reg.predict(yld[['Temp']]))
+plt.scatter(X, y, color='green')
+plt.plot(X, reg.predict(X))
 plt.xlabel('Temperature')
 plt.ylabel('Yield');
 ```
 
 
-![png](index_files/index_11_0.png)
+![png](index_files/index_13_0.png)
 
 
 
 ```python
 from sklearn.metrics import mean_squared_error, r2_score
 
-mean_squared_error(y, reg.predict(yld[['Temp']]))
+mean_squared_error(y, reg.predict(X))
 
-r2_score(y, reg.predict(yld[['Temp']]))
+r2_score(y, reg.predict(X))
 ```
 
 
@@ -93,8 +158,7 @@ The idea is simple. You can square your predictor (here, "Temp") and include it 
 
 
 ```python
-X = yld[['Temp']]
-X['Temp_sq'] = yld['Temp']**2
+X['Temp_sq'] = X['Temp']**2
 X.head()
 ```
 
@@ -174,7 +238,7 @@ plt.ylabel('Yield');
 ```
 
 
-![png](index_files/index_19_0.png)
+![png](index_files/index_21_0.png)
 
 
 This is the resulting plot. Note that the fit is much better, and this is confirmed by the $R^2$score: where it was 0.086 before, it now is 0.6948!
@@ -182,6 +246,17 @@ This is the resulting plot. Note that the fit is much better, and this is confir
 
 ```python
 mean_squared_error(y, reg_q.predict(X))
+```
+
+
+
+
+    0.04650413890879158
+
+
+
+
+```python
 r2_score(y, reg_q.predict(X))
 ```
 
@@ -199,17 +274,17 @@ Note that you get a seemingly "piecewise linear" function here,  because the yie
 import numpy as np
 plt.scatter(X['Temp'], y, color='green')
 
-X_pred = pd.DataFrame(np.linspace(50, 100, 50), columns=['temp'])
-X_pred['sq'] = X_pred**2 
+X_pred = pd.DataFrame(np.linspace(50, 100, 50), columns=['Temp'])
+X_pred['Temp_sq'] = X_pred**2 
 y_pred = reg_q.predict(X_pred)
 
-plt.plot(X_pred['temp'], y_pred)
+plt.plot(X_pred['Temp'], y_pred)
 plt.xlabel('Temperature')
 plt.ylabel('Yield');
 ```
 
 
-![png](index_files/index_23_0.png)
+![png](index_files/index_26_0.png)
 
 
 ## Higher-order relationships
@@ -221,7 +296,7 @@ The use of polynomials is not restricted to quadratic relationships. You can exp
 from sklearn.preprocessing import PolynomialFeatures
 
 y = yld['Yield']
-X = yld[['Temp']]
+X = yld.drop(columns='Yield', axis=1)
 
 poly = PolynomialFeatures(6)
 X_fin = poly.fit_transform(X)
@@ -267,12 +342,23 @@ plt.ylabel('Yield');
 ```
 
 
-![png](index_files/index_32_0.png)
+![png](index_files/index_35_0.png)
 
 
 
 ```python
 mean_squared_error(y, reg_poly.predict(X_fin))
+```
+
+
+
+
+    0.03670634920635693
+
+
+
+
+```python
 r2_score(y, reg_poly.predict(X_fin))
 ```
 
