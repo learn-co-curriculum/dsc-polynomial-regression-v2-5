@@ -561,7 +561,7 @@ Take a look at what these transformed features really look like. As you can see,
 
 
 ```python
-feature_names = poly.get_feature_names(input_features=X.columns)
+feature_names = poly.get_feature_names_out(input_features=X.columns)
 
 print(f'The transformed feature names are: {feature_names}')
 print('------------------')
