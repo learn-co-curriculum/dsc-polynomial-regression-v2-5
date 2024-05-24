@@ -941,7 +941,6 @@ We are now up to 7 coefficients and **none** of them are statistically significa
 ## Additional Resources
 
 * Check out [this resource](https://www.khanacademy.org/math/algebra/x2f8bb11595b61c86:quadratic-functions-equations) for a refresher on parabolas and the relationship between quadratic graphs and formulas
-* Wondering why we always seem to use every lower degree term instead of skipping to a higher degree? [This resource](https://maxhfarrell.com/bus41100/handout_41100_PolynomialRegression.pdf) demonstrates how that would be similar to skipping the intercept term and involve making undue assumptions
 
 ## Summary
 
